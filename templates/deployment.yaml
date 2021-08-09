@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-frontend
+  labels:
+    name: {{ .Release.Name }}-frontend-app
+
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      name: {{ .Release.Name }}-frontend-app
+  template:
+    metadata:
+      labels:
+        name: {{ .Release.Name }}-frontend-app
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+        - name: {{ .Release.Name }}-frontend-configmap
+          configMap:
+            name: {{ .Release.Name }}-frontend-configmap
+
+      containers:
+        - name: {{ .Release.Name }}-frontend-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args: ["-c", "rm -Rf /etc/nginx/conf.d/nginx.conf; nginx -g daemon off;"]
+          
+          volumeMounts:
+            - name: {{ .Release.Name }}-frontend-configmap
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: nginx.conf
+            - name: {{ .Release.Name }}-frontend-configmap
+              mountPath: /usr/share/nginx/html/config/config.json
+              subPath: config.json
+          ports:
+            - name: http
+              containerPort: {{ .Values.frontend.port }}
+              protocol: TCP
+          {{- if .Values.resources }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}

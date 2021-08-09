@@ -1,0 +1,5 @@
+/charts
+.DS_Store
+Chart.lock
+
+values.*.yaml
