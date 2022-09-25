@@ -3,10 +3,15 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-frontend-configmap
 data:
+#   config.json: |
+#     {
+#       "api": "{{- printf "%s" .Values.frontend.api.url}}";
+#     }
   config.json: |
-    {
-      "api": "{{- printf "%s" .Values.frontend.api.url}}"
-    }
+    // https://profinit.eu/en/blog/build-once-deploy-many-in-react-dynamic-configuration-properties/
+    const apiUrl = "{{- printf "%s" .Values.frontend.api.url}}";
+    const env = "TEST";
+
   nginx.conf: |
     server {
         listen 8080;

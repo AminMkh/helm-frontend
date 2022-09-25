@@ -3,14 +3,12 @@
 # Declare variables to be passed into your templates.
 
 image:
-  repository: 
-  # pullPolicy: Always
+  repository: CHANGE_ME
   pullPolicy: IfNotPresent
-  tag: ""
-  # tag: ""
+  tag: CHANGE_ME
 
 imagePullSecrets:
-  - name: regcred-local
+  - name: CHANGE_ME
 
 nameOverride: "" # append this name to helm installation name.
 # helm deploy my-awesome-app django-app/     => my-awesome-nameOverride-app-web-74d48f548f-x4zhs
@@ -19,12 +17,11 @@ fullnameOverride: "" # replace entire helm installation name with this.
 
 env:
   normal:
-
   secret:
 
 frontend:
   api:
-    url: "https://api.app.dev"
+    url: CHANGE_ME
     # version: '111'
 
   replicaCount: 2
@@ -84,11 +81,11 @@ frontend:
       # kubernetes.io/tls-acme: "true"
 
     hosts:
-      - host: www.app.dev
+      - host: CHANGE_ME
         paths:
           - path: /
             pathType: ImplementationSpecific
     tls:
-     - secretName: amin-example-tls
+     - secretName: example-tls
        hosts:
-         - www.app.dev
+         - CHANGE_ME
